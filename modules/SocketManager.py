@@ -3,20 +3,27 @@ import time
 
 
 class SocketManager:
+    # TODO check how icmp sender works
     @staticmethod
-    def create_sender(ttl):
-        sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM,
-                             socket.IPPROTO_UDP)
+    def create_sender(ttl, method):
+        if method == 'icmp':
+            sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM,
+                                 socket.IPPROTO_ICMP)
+        else:
+            sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM,
+                                 socket.IPPROTO_UDP)
         sock.setsockopt(socket.SOL_IP, socket.IP_TTL, ttl)
+        # sock.setblocking(False) - не работают
         return sock
 
     # TODO 1) add connection timeout
-    # TODO 2) create solution to detect only your socket packets!
+    # TODO 2) create solution to detect only self socket packs
     @staticmethod
     def create_receiver(port):
         sock = socket.socket(socket.AF_INET, socket.SOCK_RAW,
                              socket.IPPROTO_ICMP)
         sock.setsockopt(socket.SOL_IP, socket.SO_REUSEADDR, 1)
+        # sock.setblocking(False) - не работают
         try:
             sock.bind(('', port))
         except socket.error as e:

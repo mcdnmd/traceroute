@@ -21,4 +21,3 @@ class Traceroute:
 
     def is_a_destination(self, addr):
         return addr == self.target or self.ttl > self.max_hops
-

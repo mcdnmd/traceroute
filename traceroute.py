@@ -7,19 +7,18 @@ def main():
     parser.add_argument('destination', action='store',
                         help='domain name or IP-address')
     parser.add_argument('-f', '--first-hop', type=int, action='store',
-                        default=1,  dest='ttl',
+                        default=1, dest='ttl',
                         help='set initial hop distance, i.e., time-to-live '
                              '(default: 1)')
     parser.add_argument('-I', '--icmp', action='store_true', dest='icmp_echo',
                         default=False, help='use ICMP ECHO as probe')
     parser.add_argument('-m', '--max-hop', type=int, action='store',
-                        dest='max_hops',
-                        default=64, help='Maximum number of hops')
+                        dest='max_hops', default=64,
+                        help='Maximum number of hops')
     parser.add_argument('-M', '--method', action='store', type=str,
                         dest='method', default="udp",
                         help='use METHOD ("icmp" or "udp") for traceroute '
-                             'perations, ' \
-                             'defaulting to `udp')
+                             'perations, defaulting to `udp')
     parser.add_argument('-p', '--port', action='store', type=int, dest='port',
                         default=33434,
                         help='use destination PORT port (default: 33434)')

@@ -10,7 +10,6 @@ class Router:
         self.traceroute = traceroute
         self.sockmanager = SocketManager()
         self.terminal_writer = TerminalWriter(self.traceroute.ttl)
-        self.is_a_destination = False
 
     def start(self):
         self.terminal_writer.add_start_line(self.traceroute.dest,
@@ -29,15 +28,15 @@ class Router:
         current_addr = None
         for i in range(self.traceroute.pack_per_hop):
             receiver = self.sockmanager.create_receiver(self.traceroute.port)
-            sender = self.sockmanager.create_sender(self.traceroute.ttl)
+            sender = self.sockmanager.create_sender(self.traceroute.ttl,
+                                                    self.traceroute.method)
 
             start_time = time.time()
 
             self.sockmanager.send_message(sender, self.traceroute.dest,
-                                              self.traceroute.port)
+                                          self.traceroute.port)
 
-            current_addr, end_time = self.sockmanager.receive_message(
-                receiver)
+            current_addr, end_time = self.sockmanager.receive_message(receiver)
 
             ping = (end_time - start_time) * 1000
 
@@ -47,8 +46,7 @@ class Router:
 
     def get_server_address(self):
         try:
-            self.traceroute.target = socket.gethostbyname(
-                self.traceroute.dest)
+            self.traceroute.target = socket.gethostbyname(self.traceroute.dest)
         except Exception as e:
             raise IOError(f'Unable to resolve{self.traceroute.dest}:'
                           f' {e}')
