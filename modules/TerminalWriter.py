@@ -20,6 +20,7 @@ class TerminalWriter:
 
     def add_text(self, text):
         self.buffer += f'{text} '
+
     def print_buffer(self):
         print(self.buffer)
         self.clear_buffer()
