@@ -8,7 +8,7 @@ from modules.TerminalWriter import TerminalWriter
 class Router:
     def __init__(self, traceroute):
         self.traceroute = traceroute
-        self.sockmanager = SocketManager()
+        self.sockmanager = SocketManager(self.traceroute.timeout)
         self.terminal_writer = TerminalWriter(self.traceroute.ttl)
 
     def start(self):
@@ -23,7 +23,6 @@ class Router:
             if self.traceroute.is_a_destination(addr):
                 break
 
-    # TODO add UDP, ICMP separation
     def make_request_to_intermediate_server(self):
         current_addr = None
         for i in range(self.traceroute.pack_per_hop):
@@ -37,11 +36,13 @@ class Router:
                                           self.traceroute.port)
 
             current_addr, end_time = self.sockmanager.receive_message(receiver)
+            if current_addr == -1 and end_time == -1:
+                self.terminal_writer.add_text('*')
+            else:
+                ping = (end_time - start_time) * 1000
 
-            ping = (end_time - start_time) * 1000
-
-            self.terminal_writer.add_info_from_intermediate_server(
-                self.traceroute.ttl, current_addr[0], ping)
+                self.terminal_writer.add_info_from_intermediate_server(
+                    self.traceroute.ttl, current_addr[0], ping)
         return current_addr
 
     def get_server_address(self):
